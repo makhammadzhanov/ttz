@@ -111,6 +111,15 @@ class ClientJson extends Model
     }
 
     /**
+     * @param int $id
+     * @return bool
+     */
+    public static function delete(int $id): bool
+    {
+        return JsonDataProvider::delete($id);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function attributeLabels(): array

@@ -5,6 +5,7 @@ namespace app\dataproviders;
 use app\models\ClientXlsx;
 use yii\data\BaseDataProvider;
 use PhpOffice\PhpSpreadsheet\{IOFactory, Spreadsheet};
+use yii\helpers\Json;
 
 class XlsxDataProvider extends BaseDataProvider
 {
@@ -148,5 +149,44 @@ class XlsxDataProvider extends BaseDataProvider
         }
 
         return null;
+    }
+
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public static function delete(int $id): bool
+    {
+        $self = new self;
+        $models = $self->models;
+
+        $idx = array_search($id, array_column($models, 'id'));
+
+        if ($idx !== false) {
+            unset($models[$idx]);
+
+            array_unshift($models, $self->fields);
+
+            $sheetIndex = $self->spreadsheet->getIndex(
+                $self->spreadsheet->getActiveSheet()
+            );
+            $self->spreadsheet->removeSheetByIndex($sheetIndex);
+            $self->spreadsheet->createSheet();
+
+            $worksheet = $self->spreadsheet->getActiveSheet();
+            $worksheet->fromArray($models);
+
+            try {
+                $writer = IOFactory::createWriter($self->spreadsheet, 'Xlsx');
+                $writer->save($self->filename);
+
+                return true;
+            } catch (\Exception $e) {
+                return false;
+            }
+
+        }
+
+        return false;
     }
 }

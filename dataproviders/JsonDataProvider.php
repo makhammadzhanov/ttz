@@ -119,4 +119,25 @@ class JsonDataProvider extends BaseDataProvider
 
         return null;
     }
+
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public static function delete(int $id): bool
+    {
+        $self = new self;
+        $models = $self->models;
+
+        $idx = array_search($id, array_column($models, 'id'));
+
+        if ($idx !== false) {
+            unset($models[$idx]);
+            if (file_put_contents($self->filename, Json::encode($models))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

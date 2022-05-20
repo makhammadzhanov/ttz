@@ -112,6 +112,15 @@ class ClientXlsx extends Model
     }
 
     /**
+     * @param int $id
+     * @return bool
+     */
+    public static function delete(int $id): bool
+    {
+        return XlsxDataProvider::delete($id);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function attributeLabels(): array

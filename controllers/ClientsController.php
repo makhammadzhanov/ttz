@@ -60,6 +60,7 @@ class ClientsController extends ActiveController
         if ($this->dataSource !== DS_DATABASE) {
             unset($actions['create']);
             unset($actions['update']);
+            unset($actions['delete']);
             unset($actions['view']);
         }
 
@@ -87,6 +88,33 @@ class ClientsController extends ActiveController
 
         if ($this->dataSource === DS_XLSX) {
             return ClientXlsx::update($id, Yii::$app->request->bodyParams);
+        }
+
+        return [];
+    }
+
+    public function actionDelete($id)
+    {
+        if ($this->dataSource === DS_JSON) {
+            if (ClientJson::delete($id)) {
+                return [
+                    'success' => true,
+                    'data' => [
+                        'message' => 'Элемент удален.'
+                    ]
+                ];
+            }
+        }
+
+        if ($this->dataSource === DS_XLSX) {
+            if (ClientXlsx::delete($id)) {
+                return [
+                    'success' => true,
+                    'data' => [
+                        'message' => 'Элемент удален.'
+                    ]
+                ];
+            }
         }
 
         return [];
